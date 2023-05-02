@@ -29,9 +29,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun readApi() {
         GlobalScope.launch(Dispatchers.IO) {
+            // This code runs on a background thread
             Log.d("MainActivity", "Start calling API")
-            val result =
-                URL("https://3414-110-49-17-15.ngrok-free.app/project/DB/get/Temi_start.php?ID=2").readText()
+            val result = URL("http://10.232.153.49:8080/project/DB/get/Temi_start.php?ID=2").readText()
+
             Log.d("MainActivity", "API result: $result")
 
             // parse the JSON response
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     if (status == "start") {
                         // check if Temi is available
 
-                        Log.d("MainActivity", "Temi is available")
+                        Log.d("MainActivity", "Temi is start")
                         // navigate to Activity2
                         startActivity(Intent(this@MainActivity, Activity2::class.java))
                         finish()
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                         // increment the number of read attempts
                         readApiAttempts++
                         // check if we have reached the maximum number of attempts
-                        if (readApiAttempts < 10) {
+                        if (readApiAttempts < 5760) {
                             // try reading the API again
                             readApi()
                         } else {
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                     // increment the number of read attempts
                     readApiAttempts++
                     // check if we have reached the maximum number of attempts
-                    if (readApiAttempts < 10) {
+                    if (readApiAttempts < 5760) {
                         // try reading the API again
                         readApi()
                     } else {
