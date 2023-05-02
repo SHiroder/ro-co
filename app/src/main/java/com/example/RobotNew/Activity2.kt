@@ -277,5 +277,4 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
             listlocation = locations
         }
     }
-
 }
