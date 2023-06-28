@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             // This code runs on a background thread
             Log.d("MainActivity", "Start calling API")
-            val result = URL("http://10.232.153.49:8080/project/DB/get/Temi_start.php?ID=2").readText()
+            val result = URL("http://10.232.4.111:8080/project/DB/get/Temi_start.php?ID=2").readText()
 
             Log.d("MainActivity", "API result: $result")
 
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
 
                     } else if (status == "IDLE") {
                         Log.e("MainActivity", "Temi is not available")
-                        // wait for 5 seconds
-                        delay(5000)
+                        // wait for 10 seconds
+                        delay(10000)
                         // increment the number of read attempts
                         readApiAttempts++
                         // check if we have reached the maximum number of attempts
@@ -72,21 +72,6 @@ class MainActivity : AppCompatActivity() {
                             Log.e("MainActivity", "Reached maximum read attempts")
                         }
                         break
-                    }
-                }
-
-                if (!found) {
-                    Log.e("MainActivity", "Temi is not available")
-                    // wait for 5 seconds
-                    delay(5000)
-                    // increment the number of read attempts
-                    readApiAttempts++
-                    // check if we have reached the maximum number of attempts
-                    if (readApiAttempts < 5760) {
-                        // try reading the API again
-                        readApi()
-                    } else {
-                        Log.e("MainActivity", "Reached maximum read attempts")
                     }
                 }
             } else {
