@@ -18,14 +18,15 @@ import java.io.OutputStreamWriter
 import java.lang.Runnable
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.concurrent.thread
 
 class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
     private lateinit var robot: Robot
     private var state: Int = -1
     private var pp: Int = 1
-    private var ii: Int = 10
-    private var temiId: Int = 1
-
+    private var ii: Int = 9
+    private var temiId: Int = 2
+    private var lol = false
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,7 +161,6 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
         startActivity(intent)
     }
 
-
     private var listlocation = ArrayList<String>()
     private var arrayText = ArrayList<String>()
     private var arrayIDp = ArrayList<String>()
@@ -175,73 +175,82 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                 if (listlocation.size > state) {
                     Thread(Runnable {
                         try {
-                            var success = false
-                            while (!success) {
-                                ii-=1
+
+                            while (!lol) {
                                 val url = "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
                                 Log.d("HBSYMPTOMS", "url status: $url / dataObject : $ii ")
-                                ii+=1
+                                Log.d("II", "dataObject : $ii ")
                                 val response = URL(url).readText()
                                 val jsonObject = JSONObject(response)
-                                success = jsonObject.getBoolean("success")
-
-
-
+                                val success = jsonObject.getBoolean("success")
                                 if (success) {
-                                    Log.d("symptoms", "updateLocationToServer: $state / insertDataToServer : $temiId / StatusOnOff : $ii ")
+                                    Log.d(
+                                        "symptoms",
+                                        "updateLocationToServer: $state / insertDataToServer : $temiId / StatusOnOff : $ii "
+                                    )
                                     val dataArray = jsonObject.getJSONArray("data")
-                                    val dataObject = dataArray.getJSONObject(pp)
-                                    val ss = dataObject.getString("Status_symptoms")
-                                    Log.d("activity2", "url status: $url / dataObject : $ss ")
-                                    if (ss == "success") {
+                                        val dataObject = dataArray.getJSONObject(0)
+                                        val ss = dataObject.getString("Status_symptoms")
+                                        Log.d("Database", "url status: $url / dataObject : $ss / data $dataObject")
 
-                                        if (state < listlocation.size) {
-                                            robot.goTo(
-                                                listlocation[state],
-                                                backwards = false,
-                                                noBypass = false
-                                            )
-                                            updateLocationToServer(state + 1)
-                                            insertDataToServer(temiId)
-                                            StatusOnOff(ii)
-                                            Log.d("robotgoto", " status: ${listlocation[state]} on $ii area $state")
-                                            robot!!.speak(TtsRequest.create(arrayText[state], language = TtsRequest.Language.TH_TH
+                                        if (ss == "success") {
+                                            if (state < listlocation.size) {
+                                                Thread.sleep(1000)
+                                                robot.goTo(
+                                                    listlocation[state],
+                                                    backwards = false,
+                                                    noBypass = false
                                                 )
-                                            )
-                                            Log.d("robotgoto", " status: ${listlocation[state]} on $ii area $state")
-
-                                            ii+=1
-                                            pp++
-
-                                        } else if (pp == listlocation.size) {
-                                            var final = false
-                                            while (!final){
-                                                Log.d("ppez", " $pp >= ${listlocation.size} ? $ii")
-                                                val url2 = "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
-                                                val response2 = URL(url2).readText()
-                                                val jsonObject2 = JSONObject(response2)
-                                                val dataArray2 = jsonObject2.getJSONArray("data")
-                                                if (dataArray2.length() > 0) {
-                                                    val dataObject2 = dataArray2.getJSONObject(0)
-                                                    val ss2 = dataObject2.getString("Status_symptoms")
-                                                    Log.d(
-                                                        "symptoms_final",
-                                                        "url status: $url2 / dataObject : $ss2 "
+                                                updateLocationToServer(state + 1)
+                                                insertDataToServer(temiId)
+                                                StatusOnOff(ii)
+                                                robot.speak(
+                                                    TtsRequest.create(
+                                                        arrayText[state],
+                                                        language = TtsRequest.Language.TH_TH
                                                     )
-                                                    if (ss2 == "success") {
-                                                        updateStatusToIdle()
-                                                        final = true
+                                                )
+                                                Log.d("robotgoto", " status: ${listlocation[state]} on $ii area $state")
+
+                                                ii += 1
+                                                pp += 1
+                                                Log.d("II2", "dataObject : $ii ")
+                                                lol = true
+                                                break
+
+                                            } else if (pp == listlocation.size) {
+                                                var final = false
+                                                while (!final) {
+                                                    Thread.sleep(3000)
+                                                    Log.d("ppez", " $pp >= ${listlocation.size} ? $ii")
+                                                    val url2 =
+                                                        "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
+                                                    val response2 = URL(url2).readText()
+                                                    val jsonObject2 = JSONObject(response2)
+                                                    val dataArray2 = jsonObject2.getJSONArray("data")
+                                                    if (dataArray2.length() > 0) {
+                                                        val dataObject2 = dataArray2.getJSONObject(0)
+                                                        val ss2 =
+                                                            dataObject2.getString("Status_symptoms")
+                                                        Log.d(
+                                                            "symptoms_final",
+                                                            "url status: $url2 / dataObject : $ss2 "
+                                                        )
+                                                        if (ss2 == "success") {
+                                                            updateStatusToIdle()
+                                                            final = true
+                                                        }
                                                     }
-                                                }
+
                                             }
                                         }
                                     } else {
-                                        success = false
                                         Thread.sleep(1000)
                                     }
 
                                 } else {
-                                    Thread.sleep(1000)
+                                    lol = false
+                                    Thread.sleep(5000)
                                 }
                             }
 
