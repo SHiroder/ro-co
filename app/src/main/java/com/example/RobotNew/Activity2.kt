@@ -200,28 +200,27 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                                                     listlocation[state],
                                                     backwards = false,
                                                     noBypass = false
+
                                                 )
-                                                updateLocationToServer(state + 1)
-                                                insertDataToServer(temiId)
-                                                StatusOnOff(ii)
                                                 robot.speak(
                                                     TtsRequest.create(
                                                         arrayText[state],
                                                         language = TtsRequest.Language.TH_TH
                                                     )
                                                 )
+                                                updateLocationToServer(state + 1)
+                                                insertDataToServer(temiId)
+                                                StatusOnOff(ii)
+
                                                 Log.d("robotgoto", " status: ${listlocation[state]} on $ii area $state")
 
-                                                ii += 1
-                                                pp += 1
+                                                ii++
+                                                pp +=1
                                                 Log.d("II2", "dataObject : $ii ")
-                                                lol = true
-                                                break
 
                                             } else if (pp == listlocation.size) {
                                                 var final = false
                                                 while (!final) {
-                                                    Thread.sleep(3000)
                                                     Log.d("ppez", " $pp >= ${listlocation.size} ? $ii")
                                                     val url2 =
                                                         "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
@@ -245,11 +244,10 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                                             }
                                         }
                                     } else {
-                                        Thread.sleep(1000)
+                                        Thread.sleep(3000)
                                     }
 
                                 } else {
-                                    lol = false
                                     Thread.sleep(5000)
                                 }
                             }
