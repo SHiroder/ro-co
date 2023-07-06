@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                         found = true
                         break
 
-                    } else if (status == "IDLE") {
+                    } else {
                         Log.e("MainActivity", "Temi is not available")
                         // wait for 10 seconds
                         delay(10000)

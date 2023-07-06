@@ -25,6 +25,8 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
     private var state: Int = -1
     private var pp: Int = 1
     private var ii: Int = 9
+    private var pp2: Int = 0
+    private var ii2: Int = 8
     private var temiId: Int = 2
     private var lol = false
     @SuppressLint("MissingInflatedId")
@@ -177,9 +179,9 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                         try {
 
                             while (!lol) {
-                                val url = "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
-                                Log.d("HBSYMPTOMS", "url status: $url / dataObject : $ii ")
-                                Log.d("II", "dataObject : $ii ")
+                                val url = "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii2"
+                                Log.d("HBSYMPTOMS", "url status: $url / dataObject : $ii2 ")
+                                Log.d("II", "dataObject : $ii2 ")
                                 val response = URL(url).readText()
                                 val jsonObject = JSONObject(response)
                                 val success = jsonObject.getBoolean("success")
@@ -195,7 +197,7 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
 
                                         if (ss == "success") {
                                             if (state < listlocation.size) {
-                                                Thread.sleep(1000)
+
                                                 robot.goTo(
                                                     listlocation[state],
                                                     backwards = false,
@@ -208,47 +210,39 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                                                         language = TtsRequest.Language.TH_TH
                                                     )
                                                 )
-                                                updateLocationToServer(state + 1)
+                                                updateLocationToServer(pp)
                                                 insertDataToServer(temiId)
                                                 StatusOnOff(ii)
-
+                                                pp++
+                                                ii++
                                                 Log.d("robotgoto", " status: ${listlocation[state]} on $ii area $state")
 
-                                                ii++
-                                                pp +=1
-                                                Log.d("II2", "dataObject : $ii ")
 
-                                            } else if (pp == listlocation.size) {
+                                                Log.d("II2", "dataObject : $ii  //$pp //$state")
+
+                                        }else  if (pp2 == listlocation.size+1) {
                                                 var final = false
                                                 while (!final) {
-                                                    Log.d("ppez", " $pp >= ${listlocation.size} ? $ii")
+                                                    Log.d("ppez", " $pp >= ${listlocation.size+1} ? $ii")
                                                     val url2 =
-                                                        "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii"
+                                                        "http://10.232.4.111:8080/project/DB/get/healthbox_symptoms.php?Temi_ID=$ii2"
                                                     val response2 = URL(url2).readText()
                                                     val jsonObject2 = JSONObject(response2)
                                                     val dataArray2 = jsonObject2.getJSONArray("data")
-                                                    if (dataArray2.length() > 0) {
-                                                        val dataObject2 = dataArray2.getJSONObject(0)
-                                                        val ss2 =
-                                                            dataObject2.getString("Status_symptoms")
-                                                        Log.d(
-                                                            "symptoms_final",
-                                                            "url status: $url2 / dataObject : $ss2 "
-                                                        )
-                                                        if (ss2 == "success") {
-                                                            updateStatusToIdle()
-                                                            final = true
-                                                        }
+                                                    val dataObject2 = dataArray2.getJSONObject(0)
+                                                    val ss2 = dataObject2.getString("Status_symptoms")
+                                                    Log.d("symptoms_final", "url status: $url2 / dataObject : $ss2 ")
+                                                    Thread.sleep(3000)
+                                                    if (ss2 == "success") {
+                                                        updateStatusToIdle()
+                                                        final = true
+                                                        lol = true
                                                     }
 
+                                                }
                                             }
-                                        }
-                                    } else {
-                                        Thread.sleep(3000)
                                     }
 
-                                } else {
-                                    Thread.sleep(5000)
                                 }
                             }
 
@@ -256,7 +250,9 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                             e.printStackTrace()
                         }
                     }).start()
-                    state += 1
+                    state+=1
+                    ii2+=1
+                    pp2+=1
 
                 }
             }
