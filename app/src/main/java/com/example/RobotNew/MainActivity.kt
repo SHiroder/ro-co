@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             // This code runs on a background thread
             Log.d("MainActivity", "Start calling API")
-            val result = URL("http://10.232.4.111:8080/project/DB/get/Temi_start.php?ID=2").readText()
+            val result = URL("http://10.232.254.109:8080/project/DB/get/Temi_start.php?ID=2").readText()
 
             Log.d("MainActivity", "API result: $result")
 
