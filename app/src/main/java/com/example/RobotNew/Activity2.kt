@@ -208,8 +208,7 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
 
                                             )
                                             robot.speak(
-                                                TtsRequest.create(
-                                                    arrayText[state],
+                                                TtsRequest.create("ไปที่ห้อง "+listlocation[state]+"           กรุณาตรวจวัดอุณหภูมิ อัตราการเต้นหัวใจ และออกซิเจนในเลือด ที่ทางด้านขวาของกล่องด้วยค่ะ ",
                                                     language = TtsRequest.Language.TH_TH
                                                 )
                                             )
@@ -221,7 +220,7 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                                             pp++
                                             ii++
                                             Log.d("robotgoto", " status: ${listlocation[state]} on ii3 $ii3 /ii2 $ii2 /ii $ii area $state at pp2 $pp2 / pp $pp")
-                                            Thread.sleep(3000)
+                                            Thread.sleep(10000)
                                         }else  if (pp2 == listlocation.size+1) {
                                             var final = false
                                             while (!final) {
@@ -237,6 +236,11 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
                                                 Log.d("symptoms_final", "url status: $url2 / dataObject : $ss2 ")
 
                                                 if (ss2 == "success") {
+                                                    robot.speak(
+                                                        TtsRequest.create("กำลังกลับไปที่ HOMEBASE",
+                                                            language = TtsRequest.Language.TH_TH
+                                                        )
+                                                    )
                                                     updateStatusToIdle()
                                                     final = true
                                                     lol = true
