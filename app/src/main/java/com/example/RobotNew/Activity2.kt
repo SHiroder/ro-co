@@ -115,31 +115,6 @@ class Activity2 : AppCompatActivity(), OnGoToLocationStatusChangedListener {
         })
     }
 
-    private fun updateStatusToIdle() {
-        val client = OkHttpClient()
-        val url = "http://10.232.254.109:8080/project/DB/get/temi_location_idle.php"
-        val requestBody = JSONObject().apply {
-            put("status_success", "IDLE")
-        }.toString().toRequestBody("application/json".toMediaTypeOrNull())
-        val request = Request.Builder()
-            .url(url)
-            .patch(requestBody)
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("Activity2", "Error updating status: ${e.message}")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    Log.d("Activity2", "Status updated to IDLE successfully")
-                    updateTemiStartStatus(client)
-                } else {
-                    Log.e("Activity2", "Error updating status: ${response.code}")
-                }
-            }
-        })
-    }
 
     private fun updateStatusToIdle() {
         val client = OkHttpClient()  // Create an instance of the OkHttpClient
